@@ -42,6 +42,16 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
+
+//        for (String s: args) {
+//            System.out.println(s);
+//        }
+
+        File testDir = new File("test/asm");
+        File asmFile = new File(testDir,"add_2_ints.asm");
+
+        System.out.println("s:" + asmFile.getAbsolutePath());
+
         VirtualMachine virtualMachine = new VirtualMachine();
 
 
@@ -58,9 +68,7 @@ public class Main {
 //        virtualMachine.run();
 
 
-
-//        String filePath = "/Users/baidu/mips/asm/greetings.asm";
-        String filePath = "/Users/baidu/mips/asm/add_2_ints.asm";
+        String filePath = asmFile.getAbsolutePath();
         AntrlrParser parser = new AntrlrParser();
         InstructionMemory memory = parser.parse(new File(filePath));
         virtualMachine.setStatements(memory);
