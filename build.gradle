@@ -1,0 +1,31 @@
+apply plugin: 'idea'
+//and standard one
+apply plugin: 'java'
+
+
+apply plugin: 'application'
+
+//mainClassName = "com.github.mshockwave.mips_assembler.Main"
+
+group 'com.github.mshockwave'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'gen',"src"
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'org.antlr:antlr4:4.7+'
+    compile 'com.google.guava:guava:19.0'
+}
