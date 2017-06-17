@@ -1,7 +1,4 @@
-package com.chonwhite.mips.assembler;
-
-import com.chonwhite.mips.Instruction;
-import com.chonwhite.mips.InstructionMemory;
+package com.chonwhite.mips;
 
 import java.util.HashMap;
 
@@ -16,9 +13,16 @@ public class MemoryImpl implements InstructionMemory {
     }
 
     @Override
-    public void appendInstruction(Instruction instruction) {
+    public int appendInstruction(Instruction instruction) {
         instructionMap.put(baseAddress, instruction);
+        int location = baseAddress;
         baseAddress += 4;
+        return location;
+    }
+
+    @Override
+    public int getNextInstructionLocation() {
+        return baseAddress;
     }
 
     @Override

@@ -7,28 +7,21 @@
 #
 
 
-.data
-sum_is: .asciiz "sum is:"
-
-.text
 main:
-	li $s0, 0 			#sum = 0;
+    li $s0, 0 			#sum = 0;
 	li $t0, 0
+
 condition:
-	ble $t0, 100, loop_body
+    li $t1, 1000
+	ble $t0, $t1, loop_body
 	j print
 	
 loop_body:
 	add $s0, $t0, $s0
-	add $t0, $t0, 1		#i = 0;
+	addi $t0, $t0, 1		#i = 0;
 	j condition
 
-	
 print:
-	la $a0, sum_is
-	li $v0, 4
-	syscall
-	
 	move $a0, $s0
 	li $v0, 1
 	syscall

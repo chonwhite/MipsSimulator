@@ -37,6 +37,11 @@ public class ALU {
                     case DIV:
                         destination.setIntValue(second.getIntValue() / third.getIntValue());
                         break;
+                    case SLT:
+                        destination.setIntValue(second.getIntValue() < third.getIntValue() ? 1 : 0);
+                        System.out.println("slt");
+                        // 1 <= 3;
+                        break;
                 }
                 pc+=4;
                 break;
@@ -49,6 +54,8 @@ public class ALU {
                 pc+=4;//normal case;
                 switch (opCode) {
                     case BEQ:
+                        System.out.println(target.getIntValue() + "<" + source.getIntValue());
+                        System.out.println("beq:" + (target.getIntValue() == source.getIntValue()));
                         if (target.getIntValue() == source.getIntValue()){
                             pc = immediateValue;
                         }

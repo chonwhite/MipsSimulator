@@ -2,15 +2,18 @@ grammar MipsAsm;
 
 prog:   stat+ ;
 
-iden: ALPHA
-    | NUM
-    | ALPHA iden
-    | NUM iden
-    | '_' iden
+text_segment: '.text' NEWLINE
+    ;
+data_segment: '.data' NEWLINE
+    ;
+
+iden: NAME
     ;
 
 label: iden ':'
     | iden ':' NEWLINE
+    | iden ':' NEWLINE stat
+    | iden ':' stat
     ;
 
 reg: S_REG
@@ -140,6 +143,7 @@ op_j: 'j' target=iden
     ;
 op_jal: 'jal' target=iden
     ;
+
 instr_j: op_j
     | op_jal
     ;
@@ -156,8 +160,16 @@ op_li: 'li' rt=reg ',' signed_imm
 op_move: 'move' rt=reg ',' rs=reg
     ;
 
+op_ble: 'ble' rt=reg ',' rs=reg ',' target=iden
+    ;
+
+op_la: 'la' rt=reg ',' target=iden
+    ;
+
 instr_p: op_li
     | op_move
+    | op_ble
+    | op_la
     ;
 
 
@@ -168,9 +180,13 @@ instr: instr_r
     | instr_i
     | instr_j
     | op_halt
-    | instr COMMENT
     | instr_p
     | instr_s
+    | instr COMMENT
+    ;
+
+segment :data_segment
+    | text_segment
     ;
 
 WS: [ \t]+ -> skip ;
@@ -179,6 +195,7 @@ COMMENT: '#' .*? NEWLINE -> skip;
 NUM: [0-9]+ ;
 HEX_NUM: '0'[xX][a-fA-F0-9]+;
 ALPHA: [a-zA-Z$_];
+NAME: [a-zA-Z_][a-zA-Z_0-9]*;
 
 IMM_REG: '$'[0-9]+ ;
 S_REG: '$s'[0-7] ;

@@ -1,27 +1,54 @@
 package com.chonwhite.mips.assembler.antlr;
 
-import com.chonwhite.mips.IInstruction;
-import com.chonwhite.mips.InstructionMemory;
-import com.chonwhite.mips.RInstruction;
-import com.chonwhite.mips.Register;
-import com.chonwhite.mips.assembler.MemoryImpl;
+import com.chonwhite.mips.*;
+import com.chonwhite.mips.MemoryImpl;
 import com.chonwhite.mips.assembler.SInstruction;
 import com.chonwhite.mips.assembler.antrl.MipsAsmBaseListener;
 import com.chonwhite.mips.assembler.antrl.MipsAsmParser;
 import com.chonwhite.mips.assembler.util.InstructionCreator;
+import com.sun.tools.javac.util.Pair;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ANTLRWalker extends MipsAsmBaseListener {
 
     private InstructionMemory instructionMemory = new MemoryImpl();
     private HashMap<String,Integer> labelMap = new HashMap<>();
+    private ArrayList<Pair<Integer,String>> unresolvedLabels = new ArrayList<>();
 
     public InstructionMemory getInstructionMemory() {
         return instructionMemory;
+    }
+
+    public void onFinish(){
+
+        for (String key : labelMap.keySet()) {
+            System.out.println("" + key + "@" + labelMap.get(key));
+        }
+
+        for (Pair<Integer,String> label : unresolvedLabels) {
+            int location = label.fst;
+            String name = label.snd;
+
+            System.out.println("label:" + label);
+
+            Integer resolvedLocation = labelMap.get(name);
+
+            if (resolvedLocation == null) {
+                throw new IllegalArgumentException("cannot resolve label:" + name);
+            }
+
+            Instruction instruction = instructionMemory.get(location);
+            if (instruction.type() == Instruction.InstructType.TypeJ) {
+                ((JInstruction)instruction).setAddress(resolvedLocation);
+            }else if(instruction.type() == Instruction.InstructType.TypeI){
+                ((IInstruction)instruction).setIMM(resolvedLocation);
+            }
+        }
     }
 
     @Override
@@ -92,7 +119,9 @@ public class ANTLRWalker extends MipsAsmBaseListener {
 
     @Override
     public void enterOp_slt(MipsAsmParser.Op_sltContext ctx) {
-
+        RInstruction instruction = InstructionCreator.rInstruction(
+                RInstruction.Function.SLT,ctx.rd.getText(),ctx.rs.getText(),ctx.rt.getText());
+        instructionMemory.appendInstruction(instruction);
     }
 
     @Override
@@ -297,8 +326,40 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
+    public void enterOp_ble(MipsAsmParser.Op_bleContext ctx) {
+        String label = ctx.iden().getText();
+        Integer location = labelMap.get(label);
+
+        RInstruction sltInstruction = InstructionCreator.rInstruction(
+                RInstruction.Function.SLT,Register.RAT,
+                ctx.rt.getText(),ctx.rs.getText());
+        instructionMemory.appendInstruction(sltInstruction);
+        IInstruction bne = InstructionCreator.bne(Register.RAT, Register.RZERO);
+        int insertLocation = instructionMemory.appendInstruction(bne);
+
+        IInstruction beq = InstructionCreator.beq(ctx.rt.getText(),ctx.rs.getText());
+        int beqLocation = instructionMemory.appendInstruction(beq);
+
+        if (location == null) {
+            location = -1;
+            unresolvedLabels.add(new Pair<>(insertLocation,label));
+            unresolvedLabels.add(new Pair<>(beqLocation,label));
+        }
+        bne.setIMM(location);
+        beq.setIMM(location);
+    }
+
+    @Override
     public void enterOp_bne(MipsAsmParser.Op_bneContext ctx) {
-        System.out.println("-------enter bne:" + ctx.getText());
+        String label = ctx.iden().getText();
+        Integer location = labelMap.get(label);
+        IInstruction instruction = InstructionCreator.bne(ctx.rt.getText(),ctx.rs.getText());
+        int insertLocation = instructionMemory.appendInstruction(instruction);
+        if (location == null) {
+            location = -1;
+            unresolvedLabels.add(new Pair<>(insertLocation,label));
+        }
+        instruction.setIMM(location);
     }
 
     @Override
@@ -329,6 +390,17 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     @Override
     public void enterOp_j(MipsAsmParser.Op_jContext ctx) {
 
+
+        String label = ctx.target.getText();
+        Integer location = labelMap.get(label);
+        if (location == null){
+            location = -1;
+            int insertLocation = instructionMemory.getNextInstructionLocation();
+            unresolvedLabels.add(new Pair<>(insertLocation,label));
+        }
+        JInstruction instruction = InstructionCreator.j(location);
+
+        instructionMemory.appendInstruction(instruction);
     }
 
     @Override
@@ -422,9 +494,16 @@ public class ANTLRWalker extends MipsAsmBaseListener {
 
     @Override
     public void enterLabel(MipsAsmParser.LabelContext ctx) {
-//        System.out.println("enterLabel:" + ctx.getText());
+        System.out.println("******enterLabel:" + ctx.iden().getText());
+        int location = instructionMemory.getNextInstructionLocation();
+        labelMap.put(ctx.iden().getText(),location);
     }
 
+    @Override
+    public void exitLabel(MipsAsmParser.LabelContext ctx) {
+        super.exitLabel(ctx);
+        System.out.println("******exitLabel:" + ctx.getText());
+    }
 
     @Override
     public void enterReg(MipsAsmParser.RegContext ctx) {
@@ -444,5 +523,11 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     @Override
     public void enterStat(MipsAsmParser.StatContext ctx) {
 //        System.out.println("enter Stat:" + ctx.getText());
+    }
+
+    @Override
+    public void exitSegment(MipsAsmParser.SegmentContext ctx) {
+        super.exitSegment(ctx);
+        System.out.println("exit segment");
     }
 }

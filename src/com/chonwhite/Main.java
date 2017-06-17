@@ -48,7 +48,7 @@ public class Main {
 //        }
 
         File testDir = new File("test/asm");
-        File asmFile = new File(testDir,"add_2_ints.asm");
+        File asmFile = new File(testDir,"for_loop.asm");
 
         System.out.println("s:" + asmFile.getAbsolutePath());
 

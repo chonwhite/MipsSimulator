@@ -2,5 +2,6 @@ package com.chonwhite.mips;
 
 public interface InstructionMemory {
     Instruction get(int address);
-    void appendInstruction(Instruction instruction);
+    int appendInstruction(Instruction instruction);
+    int getNextInstructionLocation();
 }

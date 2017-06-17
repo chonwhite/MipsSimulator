@@ -15,7 +15,9 @@ main:
 	li $v0, 1		# load syscall print_int into $v0.
 	syscall
 	
-	li $v0, 10		# syscall code 10 is for exit
-	syscall
+
 
 	bne $t1,$t2,haha
+haha:
+	li $v0, 10		# syscall code 10 is for exit
+	syscall

@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Register {
 
     public static final String RZERO = "$zero";
+    public static final String RAT = "$at";
 
     public static final int $zero = 0;
 

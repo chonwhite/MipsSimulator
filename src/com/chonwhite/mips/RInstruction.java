@@ -32,7 +32,7 @@ public class RInstruction implements Instruction {
         OR(0x25),	//Bitwise OR	R	0x00
         xor(0x26),	//Bitwise XOR (Exclusive-OR)
 //        nor	Bitwise NOR (NOT-OR)	R	0x00	0x27
-//        slt	Set to 1 if Less Than	R	0x00	0x2A
+        SLT(0x2a),	//Set to 1 if Less Than
         sltu(0x2B);//	Set to 1 if Less Than Unsigned
         Function(int code){
 

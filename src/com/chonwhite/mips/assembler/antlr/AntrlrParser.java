@@ -23,6 +23,7 @@ public class AntrlrParser implements AssemblyParser {
             ANTLRWalker antlrWalker = new ANTLRWalker();
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(antlrWalker, parser.prog());
+            antlrWalker.onFinish();
             System.out.println("instructions:\n" + antlrWalker.getInstructionMemory().toString());
             return antlrWalker.getInstructionMemory();
 
