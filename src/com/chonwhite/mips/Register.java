@@ -4,22 +4,22 @@ import java.util.HashMap;
 
 public class Register {
 
-    public static final String RZERO = "$zero";
-    public static final String RAT = "$at";
+    public static final String R_ZERO = "$zero";
+    public static final String R_AT = "$at";
 
-    public static final int $zero = 0;
+    public static final int $zero = 0; //constant value zero
 
-    public static final int $at = 1;
+    public static final int $at = 1; //assembler temporary
 
-    public static final int $v0 = 2;
+    public static final int $v0 = 2; //return value
     public static final int $v1 = 3;
 
-    public static final int $a0 = 4;
+    public static final int $a0 = 4; //arguments
     public static final int $a1 = 5;
     public static final int $a2 = 6;
     public static final int $a3 = 7;
 
-    public static final int $t0 = 8;
+    public static final int $t0 = 8; //temporary
     public static final int $t1 = 9;
     public static final int $t2 = 10;
     public static final int $t3 = 11;
@@ -46,10 +46,10 @@ public class Register {
     public static final int $gp = 28;
     public static final int $sp = 29;
     public static final int $fp = 30;
-    public static final int $ra = 31;
+    public static final int $ra = 31; //return address
 
     private int index;
-    private int intValue;
+    private int intValue = 0;
 
     private static HashMap<String,Integer> sRegisterIndexMap = new HashMap<>();
 
@@ -100,6 +100,9 @@ public class Register {
     }
 
     public void setIntValue(int intValue) {
+        if (index == $zero){
+            return;
+        }
         this.intValue = intValue;
     }
 

@@ -580,30 +580,6 @@ public class MipsAsmBaseListener implements MipsAsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOp_li(MipsAsmParser.Op_liContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOp_li(MipsAsmParser.Op_liContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOp_move(MipsAsmParser.Op_moveContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOp_move(MipsAsmParser.Op_moveContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOp_ble(MipsAsmParser.Op_bleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -616,6 +592,54 @@ public class MipsAsmBaseListener implements MipsAsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOp_blt(MipsAsmParser.Op_bltContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_blt(MipsAsmParser.Op_bltContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOp_bge(MipsAsmParser.Op_bgeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_bge(MipsAsmParser.Op_bgeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOp_bgt(MipsAsmParser.Op_bgtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_bgt(MipsAsmParser.Op_bgtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOp_li(MipsAsmParser.Op_liContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_li(MipsAsmParser.Op_liContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOp_la(MipsAsmParser.Op_laContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -623,6 +647,18 @@ public class MipsAsmBaseListener implements MipsAsmListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOp_la(MipsAsmParser.Op_laContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOp_move(MipsAsmParser.Op_moveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_move(MipsAsmParser.Op_moveContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

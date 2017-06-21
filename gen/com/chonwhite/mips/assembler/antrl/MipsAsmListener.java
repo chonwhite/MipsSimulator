@@ -478,26 +478,6 @@ public interface MipsAsmListener extends ParseTreeListener {
 	 */
 	void exitInstr_s(MipsAsmParser.Instr_sContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link MipsAsmParser#op_li}.
-	 * @param ctx the parse tree
-	 */
-	void enterOp_li(MipsAsmParser.Op_liContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MipsAsmParser#op_li}.
-	 * @param ctx the parse tree
-	 */
-	void exitOp_li(MipsAsmParser.Op_liContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MipsAsmParser#op_move}.
-	 * @param ctx the parse tree
-	 */
-	void enterOp_move(MipsAsmParser.Op_moveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MipsAsmParser#op_move}.
-	 * @param ctx the parse tree
-	 */
-	void exitOp_move(MipsAsmParser.Op_moveContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link MipsAsmParser#op_ble}.
 	 * @param ctx the parse tree
 	 */
@@ -508,6 +488,46 @@ public interface MipsAsmListener extends ParseTreeListener {
 	 */
 	void exitOp_ble(MipsAsmParser.Op_bleContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MipsAsmParser#op_blt}.
+	 * @param ctx the parse tree
+	 */
+	void enterOp_blt(MipsAsmParser.Op_bltContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MipsAsmParser#op_blt}.
+	 * @param ctx the parse tree
+	 */
+	void exitOp_blt(MipsAsmParser.Op_bltContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MipsAsmParser#op_bge}.
+	 * @param ctx the parse tree
+	 */
+	void enterOp_bge(MipsAsmParser.Op_bgeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MipsAsmParser#op_bge}.
+	 * @param ctx the parse tree
+	 */
+	void exitOp_bge(MipsAsmParser.Op_bgeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MipsAsmParser#op_bgt}.
+	 * @param ctx the parse tree
+	 */
+	void enterOp_bgt(MipsAsmParser.Op_bgtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MipsAsmParser#op_bgt}.
+	 * @param ctx the parse tree
+	 */
+	void exitOp_bgt(MipsAsmParser.Op_bgtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MipsAsmParser#op_li}.
+	 * @param ctx the parse tree
+	 */
+	void enterOp_li(MipsAsmParser.Op_liContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MipsAsmParser#op_li}.
+	 * @param ctx the parse tree
+	 */
+	void exitOp_li(MipsAsmParser.Op_liContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MipsAsmParser#op_la}.
 	 * @param ctx the parse tree
 	 */
@@ -517,6 +537,16 @@ public interface MipsAsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOp_la(MipsAsmParser.Op_laContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MipsAsmParser#op_move}.
+	 * @param ctx the parse tree
+	 */
+	void enterOp_move(MipsAsmParser.Op_moveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MipsAsmParser#op_move}.
+	 * @param ctx the parse tree
+	 */
+	void exitOp_move(MipsAsmParser.Op_moveContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MipsAsmParser#instr_p}.
 	 * @param ctx the parse tree

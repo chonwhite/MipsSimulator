@@ -1,15 +1,12 @@
 package com.chonwhite.mips.assembler.antlr;
 
 import com.chonwhite.mips.*;
-import com.chonwhite.mips.MemoryImpl;
 import com.chonwhite.mips.assembler.SInstruction;
 import com.chonwhite.mips.assembler.antrl.MipsAsmBaseListener;
 import com.chonwhite.mips.assembler.antrl.MipsAsmParser;
 import com.chonwhite.mips.assembler.util.InstructionCreator;
 import com.sun.tools.javac.util.Pair;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +48,28 @@ public class ANTLRWalker extends MipsAsmBaseListener {
         }
     }
 
+    private void resolveAddress(IInstruction instruction, String label) {
+        Integer location = labelMap.get(label);
+        int beqLocation = instructionMemory.appendInstruction(instruction);
+
+        if (location == null) {
+            location = -1;
+            unresolvedLabels.add(new Pair<>(beqLocation,label));
+        }
+        instruction.setIMM(location);
+    }
+
+    private void resolveAddress(JInstruction instruction, String label) {
+        Integer location = labelMap.get(label);
+        int beqLocation = instructionMemory.appendInstruction(instruction);
+
+        if (location == null) {
+            location = -1;
+            unresolvedLabels.add(new Pair<>(beqLocation,label));
+        }
+        instruction.setAddress(location);
+    }
+
     @Override
     public void enterOp_add(MipsAsmParser.Op_addContext ctx) {
         RInstruction instruction = InstructionCreator.add(
@@ -67,13 +86,32 @@ public class ANTLRWalker extends MipsAsmBaseListener {
 
     @Override
     public void enterOp_addiu(MipsAsmParser.Op_addiuContext ctx) {
-
+        IInstruction instruction = InstructionCreator.addiu(
+                ctx.rt.getText(), ctx.rs.getText(), ctx.usigned_imm().getText());
+        instructionMemory.appendInstruction(instruction);
     }
 
     @Override
     public void enterOp_addu(MipsAsmParser.Op_adduContext ctx) {
-
+        RInstruction instruction = InstructionCreator.addu(
+                ctx.rd.getText(), ctx.rs.getText(), ctx.rt.getText());
+        instructionMemory.appendInstruction(instruction);
     }
+
+    @Override
+    public void enterOp_and(MipsAsmParser.Op_andContext ctx) {
+        RInstruction instruction = InstructionCreator.and(
+                ctx.rd.getText(), ctx.rs.getText(), ctx.rt.getText());
+        instructionMemory.appendInstruction(instruction);
+    }
+
+    @Override
+    public void enterOp_andi(MipsAsmParser.Op_andiContext ctx) {
+        IInstruction instruction = InstructionCreator.andi(
+            ctx.rt.getText(),ctx.rs.getText(),ctx.usigned_imm().getText());
+        instructionMemory.appendInstruction(instruction);
+    }
+
 
     @Override
     public void enterOp_sub(MipsAsmParser.Op_subContext ctx) {
@@ -88,17 +126,19 @@ public class ANTLRWalker extends MipsAsmBaseListener {
         instructionMemory.appendInstruction(instruction);
     }
 
-    @Override
-    public void enterOp_and(MipsAsmParser.Op_andContext ctx) {
-        RInstruction instruction = InstructionCreator.and(
-                ctx.rd.getText(), ctx.rs.getText(), ctx.rt.getText());
-        instructionMemory.appendInstruction(instruction);
-    }
 
     @Override
     public void enterOp_or(MipsAsmParser.Op_orContext ctx) {
         RInstruction instruction = InstructionCreator.or(
                 ctx.rd.getText(), ctx.rs.getText(), ctx.rt.getText());
+        instructionMemory.appendInstruction(instruction);
+    }
+
+
+    @Override
+    public void enterOp_slt(MipsAsmParser.Op_sltContext ctx) {
+        RInstruction instruction = InstructionCreator.rInstruction(
+                RInstruction.Function.SLT,ctx.rd.getText(),ctx.rs.getText(),ctx.rt.getText());
         instructionMemory.appendInstruction(instruction);
     }
 
@@ -118,13 +158,6 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void enterOp_slt(MipsAsmParser.Op_sltContext ctx) {
-        RInstruction instruction = InstructionCreator.rInstruction(
-                RInstruction.Function.SLT,ctx.rd.getText(),ctx.rs.getText(),ctx.rt.getText());
-        instructionMemory.appendInstruction(instruction);
-    }
-
-    @Override
     public void enterOp_sll(MipsAsmParser.Op_sllContext ctx) {
 
     }
@@ -140,16 +173,6 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void enterOp_jr(MipsAsmParser.Op_jrContext ctx) {
-
-    }
-
-    @Override
-    public void enterInstr_r(MipsAsmParser.Instr_rContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_lw(MipsAsmParser.Op_lwContext ctx) {
 
     }
@@ -157,7 +180,6 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     //=========================== pseudo instructions =========================
     @Override
     public void enterOp_li(MipsAsmParser.Op_liContext ctx) {
-//        System.out.println("enter li:" + ctx.getText());
         IInstruction instruction = InstructionCreator.addi(
                 ctx.rt.getText(), "$zero", ctx.signed_imm().getText());
         instructionMemory.appendInstruction(instruction);
@@ -166,42 +188,26 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     @Override
     public void enterOp_move(MipsAsmParser.Op_moveContext ctx) {
         RInstruction instruction = InstructionCreator.add(
-                ctx.rt.getText(), Register.RZERO, ctx.rs.getText());
+                ctx.rt.getText(), Register.R_ZERO, ctx.rs.getText());
         instructionMemory.appendInstruction(instruction);
     }
 
-    //========================== exit xxx ============================
-
+    //TODO
     @Override
-    public void exitInstr_r(MipsAsmParser.Instr_rContext ctx) {
+    public void enterOp_ble(MipsAsmParser.Op_bleContext ctx) {
+        //ble is an I instruction, so rs map to rt,and rt map to rs;
+        RInstruction sltInstruction = InstructionCreator.rInstruction(
+                RInstruction.Function.SLT,Register.R_AT,
+                ctx.rs.getText(),ctx.rt.getText());
+        instructionMemory.appendInstruction(sltInstruction);
 
+        IInstruction beq = InstructionCreator.beq(Register.R_AT,Register.R_ZERO);
+        resolveAddress(beq,ctx.iden().getText());
     }
 
-    @Override
-    public void exitOp_add(MipsAsmParser.Op_addContext ctx) {
-    }
-
-    @Override
-    public void exitOp_addi(MipsAsmParser.Op_addiContext ctx) {
-    }
-
-    @Override
-    public void exitOp_addiu(MipsAsmParser.Op_addiuContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_lw(MipsAsmParser.Op_lwContext ctx) {
-
-    }
 
     @Override
     public void enterOp_lh(MipsAsmParser.Op_lhContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_lh(MipsAsmParser.Op_lhContext ctx) {
 
     }
 
@@ -211,17 +217,7 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitOp_lhu(MipsAsmParser.Op_lhuContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_lb(MipsAsmParser.Op_lbContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_lb(MipsAsmParser.Op_lbContext ctx) {
 
     }
 
@@ -231,17 +227,7 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitOp_lbu(MipsAsmParser.Op_lbuContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_sw(MipsAsmParser.Op_swContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_sw(MipsAsmParser.Op_swContext ctx) {
 
     }
 
@@ -251,17 +237,7 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitOp_sh(MipsAsmParser.Op_shContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_sb(MipsAsmParser.Op_sbContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_sb(MipsAsmParser.Op_sbContext ctx) {
 
     }
 
@@ -271,27 +247,7 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitOp_lui(MipsAsmParser.Op_luiContext ctx) {
-
-    }
-
-    @Override
-    public void enterOp_andi(MipsAsmParser.Op_andiContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_andi(MipsAsmParser.Op_andiContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_ori(MipsAsmParser.Op_oriContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_ori(MipsAsmParser.Op_oriContext ctx) {
 
     }
 
@@ -301,52 +257,21 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitOp_nori(MipsAsmParser.Op_noriContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_slti(MipsAsmParser.Op_sltiContext ctx) {
 
     }
 
     @Override
-    public void exitOp_slti(MipsAsmParser.Op_sltiContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_beq(MipsAsmParser.Op_beqContext ctx) {
-
+        IInstruction instruction = InstructionCreator.beq(ctx.rt.getText(), ctx.rs.getText());
+        resolveAddress(instruction, ctx.iden().getText());
     }
 
+    // TODO
     @Override
-    public void exitOp_beq(MipsAsmParser.Op_beqContext ctx) {
-        System.out.println("-------enter beq:" + ctx.getText());
-    }
-
-    @Override
-    public void enterOp_ble(MipsAsmParser.Op_bleContext ctx) {
-        String label = ctx.iden().getText();
-        Integer location = labelMap.get(label);
-
-        RInstruction sltInstruction = InstructionCreator.rInstruction(
-                RInstruction.Function.SLT,Register.RAT,
-                ctx.rt.getText(),ctx.rs.getText());
-        instructionMemory.appendInstruction(sltInstruction);
-        IInstruction bne = InstructionCreator.bne(Register.RAT, Register.RZERO);
-        int insertLocation = instructionMemory.appendInstruction(bne);
-
-        IInstruction beq = InstructionCreator.beq(ctx.rt.getText(),ctx.rs.getText());
-        int beqLocation = instructionMemory.appendInstruction(beq);
-
-        if (location == null) {
-            location = -1;
-            unresolvedLabels.add(new Pair<>(insertLocation,label));
-            unresolvedLabels.add(new Pair<>(beqLocation,label));
-        }
-        bne.setIMM(location);
-        beq.setIMM(location);
+    public void enterOp_bge(MipsAsmParser.Op_bgeContext ctx) {
+        IInstruction instruction = InstructionCreator.bge(ctx.rt.getText(), ctx.rs.getText());
+        resolveAddress(instruction, ctx.target.getText());
     }
 
     @Override
@@ -363,134 +288,33 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitOp_bne(MipsAsmParser.Op_bneContext ctx) {
-        System.out.println("------exit bne:" + ctx.getText());
-    }
-
-    @Override
     public void enterOp_bgtz(MipsAsmParser.Op_bgtzContext ctx) {
 
     }
 
     @Override
-    public void exitOp_bgtz(MipsAsmParser.Op_bgtzContext ctx) {
-
-    }
-
-    @Override
-    public void enterInstr_i(MipsAsmParser.Instr_iContext ctx) {
-
-    }
-
-    @Override
-    public void exitInstr_i(MipsAsmParser.Instr_iContext ctx) {
-
-    }
-
-    @Override
     public void enterOp_j(MipsAsmParser.Op_jContext ctx) {
-
-
         String label = ctx.target.getText();
-        Integer location = labelMap.get(label);
-        if (location == null){
-            location = -1;
-            int insertLocation = instructionMemory.getNextInstructionLocation();
-            unresolvedLabels.add(new Pair<>(insertLocation,label));
-        }
-        JInstruction instruction = InstructionCreator.j(location);
-
-        instructionMemory.appendInstruction(instruction);
-    }
-
-    @Override
-    public void exitOp_j(MipsAsmParser.Op_jContext ctx) {
-
+        JInstruction instruction = InstructionCreator.j();
+        resolveAddress(instruction, label);
     }
 
     @Override
     public void enterOp_jal(MipsAsmParser.Op_jalContext ctx) {
-
+        JInstruction instruction = InstructionCreator.jal();
+        resolveAddress(instruction,ctx.target.getText());
     }
 
     @Override
-    public void exitOp_jal(MipsAsmParser.Op_jalContext ctx) {
-
-    }
-
-    @Override
-    public void enterInstr_j(MipsAsmParser.Instr_jContext ctx) {
-        //System.out.println("enter Instr_j:" + ctx.getText());
-    }
-
-    @Override
-    public void exitInstr_j(MipsAsmParser.Instr_jContext ctx) {
-
-    }
-
-    @Override
-    public void enterInstr_p(MipsAsmParser.Instr_pContext ctx) {
-//        System.out.println("enter Instr_p:" + ctx.getText());
-    }
-
-    @Override
-    public void exitInstr_p(MipsAsmParser.Instr_pContext ctx) {
-
+    public void enterOp_jr(MipsAsmParser.Op_jrContext ctx) {
+        RInstruction instruction = InstructionCreator.jr(ctx.rs.getText());
+        instructionMemory.appendInstruction(instruction);
     }
 
     @Override
     public void enterOp_halt(MipsAsmParser.Op_haltContext ctx) {
 
     }
-
-    @Override
-    public void exitOp_li(MipsAsmParser.Op_liContext ctx) {
-
-    }
-
-    @Override
-    public void exitOp_halt(MipsAsmParser.Op_haltContext ctx) {
-
-    }
-
-    @Override
-    public void enterInstr(MipsAsmParser.InstrContext ctx) {
-//        System.out.println("enter Instr:" + ctx.getText());
-    }
-
-    @Override
-    public void exitInstr(MipsAsmParser.InstrContext ctx) {
-
-    }
-
-    //TODO not sure what to do
-
-    @Override
-    public void visitTerminal(TerminalNode node) {
-//        System.out.println("visitTerminal:" + node.getText());
-    }
-
-    @Override
-    public void visitErrorNode(ErrorNode node) {
-        System.out.println("error:" + node);
-    }
-
-    @Override
-    public void enterEveryRule(ParserRuleContext ctx) {
-
-    }
-
-
-    @Override
-    public void enterProg(MipsAsmParser.ProgContext ctx) {
-//        System.out.println("enterProg:" + ctx.getText());
-    }
-
-    @Override
-    public void enterIden(MipsAsmParser.IdenContext ctx) {
-//        System.out.println("enterIden:" + ctx.getText());
-    }
-
 
     @Override
     public void enterLabel(MipsAsmParser.LabelContext ctx) {
@@ -500,34 +324,8 @@ public class ANTLRWalker extends MipsAsmBaseListener {
     }
 
     @Override
-    public void exitLabel(MipsAsmParser.LabelContext ctx) {
-        super.exitLabel(ctx);
-        System.out.println("******exitLabel:" + ctx.getText());
-    }
-
-    @Override
-    public void enterReg(MipsAsmParser.RegContext ctx) {
-//        System.out.println("enterReg:" + ctx.getText());
-    }
-
-    @Override
-    public void enterUsigned_imm(MipsAsmParser.Usigned_immContext ctx) {
-//        System.out.println("enter usigned imm:" + ctx.getText());
-    }
-
-    @Override
-    public void enterSigned_imm(MipsAsmParser.Signed_immContext ctx) {
-//        System.out.println("enter signed imm:" + ctx.getText());
-    }
-
-    @Override
-    public void enterStat(MipsAsmParser.StatContext ctx) {
-//        System.out.println("enter Stat:" + ctx.getText());
-    }
-
-    @Override
-    public void exitSegment(MipsAsmParser.SegmentContext ctx) {
-        super.exitSegment(ctx);
-        System.out.println("exit segment");
+    public void visitErrorNode(ErrorNode node) {
+        super.visitErrorNode(node);
+        System.out.println("error:" + node);
     }
 }

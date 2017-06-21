@@ -2,13 +2,11 @@ package com.chonwhite;
 
 import com.chonwhite.mips.*;
 import com.chonwhite.mips.assembler.antlr.AntrlrParser;
-import org.antlr.v4.parse.ANTLRParser;
-
-import static com.chonwhite.mips.Register.*;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.chonwhite.mips.Register.*;
 
 
 public class Main {
@@ -48,7 +46,8 @@ public class Main {
 //        }
 
         File testDir = new File("test/asm");
-        File asmFile = new File(testDir,"for_loop.asm");
+//        File asmFile = new File(testDir,"for_loop.asm");
+        File asmFile = new File(testDir,"function_call.asm");
 
         System.out.println("s:" + asmFile.getAbsolutePath());
 

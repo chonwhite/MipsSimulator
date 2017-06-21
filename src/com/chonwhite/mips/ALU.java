@@ -23,10 +23,12 @@ public class ALU {
                 Register destination = registers.get(instruction.getRd());
                 Register second = registers.get(instruction.getRs());
                 Register third = registers.get(instruction.getRt());
+                pc+=4;
                 switch (instruction.getFunction()) {
                     case ADD:
                         destination.setIntValue(second.getIntValue() + third.getIntValue());
-                        System.out.println("add :" + destination);
+                        System.out.println("add :" + second + "+" + third);
+                        System.out.println(destination.toString());
                         break;
                     case SUB:
                         destination.setIntValue(second.getIntValue() - third.getIntValue());
@@ -42,8 +44,12 @@ public class ALU {
                         System.out.println("slt");
                         // 1 <= 3;
                         break;
+                    case JR:
+                        System.out.println("JR:" + second.getIntValue());
+                        pc = second.getIntValue();
+                        break;
                 }
-                pc+=4;
+
                 break;
             }
             case TypeI:{
@@ -54,7 +60,7 @@ public class ALU {
                 pc+=4;//normal case;
                 switch (opCode) {
                     case BEQ:
-                        System.out.println(target.getIntValue() + "<" + source.getIntValue());
+                        System.out.println(target.getIntValue() + "==" + source.getIntValue());
                         System.out.println("beq:" + (target.getIntValue() == source.getIntValue()));
                         if (target.getIntValue() == source.getIntValue()){
                             pc = immediateValue;
@@ -62,6 +68,13 @@ public class ALU {
                         break;
                     case BNE:
                         if (target.getIntValue() != source.getIntValue()){
+                            pc = immediateValue;
+                        }
+                        break;
+                    case BGE://TODO
+                        System.out.println(target.getIntValue() + ">=" + source.getIntValue());
+                        System.out.println("bge:" + (target.getIntValue() >= source.getIntValue()));
+                        if (target.getIntValue() >= source.getIntValue()){
                             pc = immediateValue;
                         }
                         break;
@@ -74,10 +87,12 @@ public class ALU {
             }
             case TypeJ:{
                 JInstruction instruction = (JInstruction) statement;
-                pc = instruction.getAddress();
                 if (instruction.getOPCode() == OPCode.JAL) {
                     //TODO save the current registers into stack?
+                    System.out.println("JAL" + (pc + 4));
+                    registers.get(Register.$ra).setIntValue(pc + 4);
                 }
+                pc = instruction.getAddress();
                 break;
             }
             case TypeS:{
@@ -92,9 +107,12 @@ public class ALU {
                         break;
                     }
                     case 1:{//TODO print int
-                        System.out.println("" + registers.get(Register.$a0).getIntValue());
+                        System.out.println("print Int:" + registers.get(Register.$a0).getIntValue());
                         break;
                     }
+                    case 10:
+                        System.exit(0);
+                        break;
                 }
 
             }

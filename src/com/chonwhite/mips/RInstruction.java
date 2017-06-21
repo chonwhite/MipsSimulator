@@ -94,4 +94,5 @@ public class RInstruction implements Instruction {
     }
 
     private Function function;
+    //shamt is “shift amount” and is only used for shift instructions
 }

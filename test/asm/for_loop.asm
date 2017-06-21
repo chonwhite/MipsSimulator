@@ -8,11 +8,11 @@
 
 
 main:
-    li $s0, 0 			#sum = 0;
+    li $s0, 0
 	li $t0, 0
 
 condition:
-    li $t1, 1000
+    li $t1, 100
 	ble $t0, $t1, loop_body
 	j print
 	

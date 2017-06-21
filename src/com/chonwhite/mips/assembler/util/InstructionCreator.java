@@ -28,6 +28,12 @@ public class InstructionCreator {
         return instruction;
     }
 
+    public static JInstruction jInstruction(OPCode code) {
+        JInstruction instruction = new JInstruction();
+        instruction.setOPCode(code);
+        return instruction;
+    }
+
     public static IInstruction iInstruction(OPCode code, String rt, String rs, String value){
         return iInstruction(code, getIndex(rt), getIndex(rs), getIndex(value));
     }
@@ -40,6 +46,14 @@ public class InstructionCreator {
 
     public static RInstruction add(String rd, String rs, String rt) {
         return add(getIndex(rd), getIndex(rs), getIndex(rt));
+    }
+
+    public static RInstruction addu(int rd, int rs, int rt) {
+        return rInstruction(RInstruction.Function.ADDU, rd ,rs ,rt);
+    }
+
+    public static RInstruction addu(String rd, String rs, String rt) {
+        return addu(getIndex(rd), getIndex(rs), getIndex(rt));
     }
 
     public static RInstruction and(int rd, int rs, int rt) {
@@ -79,8 +93,32 @@ public class InstructionCreator {
         return addi(getIndex(rt), getIndex(rs), Integer.valueOf(value));
     }
 
+    public static IInstruction addiu(int rt, int rs, int value) {
+        return iInstruction(OPCode.ADDI, rt, rs, value);
+    }
+
+    public static IInstruction addiu(String rt, String rs, String value) {
+        return addiu(getIndex(rt), getIndex(rs), Integer.valueOf(value));
+    }
+
+    public static IInstruction andi(int rt, int rs, int value) {
+        return iInstruction(OPCode.ANDI,rt,rs,value);
+    }
+
+    public static IInstruction andi(String rt, String rs, String value) {
+        return andi(getIndex(rt), getIndex(rs), Integer.valueOf(value));
+    }
+
     public static IInstruction beq(int rt, int rs, int location) {
         return iInstruction(OPCode.BEQ, rt, rs, location);
+    }
+
+    public static IInstruction bge(int rt, int rs) {
+        return iInstruction(OPCode.BGE,rt,rs, 0);
+    }
+
+    public static IInstruction bge(String rt, String rs){
+        return bge(getIndex(rt), getIndex(rs));
     }
 
     public static IInstruction beq(String rt, String rs) {
@@ -95,10 +133,22 @@ public class InstructionCreator {
         return bne(getIndex(rt), getIndex(rs), -1);
     }
 
-    public static JInstruction j(int address){
+
+
+
+    //========================= J Instructions ========================//
+
+    public static JInstruction j(){
         JInstruction jInstruction = new JInstruction();
         jInstruction.setOPCode(OPCode.J);
-        jInstruction.setAddress(address);
         return jInstruction;
+    }
+
+    public static JInstruction jal(){
+        return jInstruction(OPCode.JAL);
+    }
+
+    public static RInstruction jr(String rd){
+        return rInstruction(RInstruction.Function.JR,0,getIndex(rd),0);
     }
 }

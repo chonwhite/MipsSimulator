@@ -68,6 +68,7 @@ op_sra: 'sra' rd=reg ',' rt=reg ',' usigned_imm
     ;
 op_jr: 'jr' rs=reg
     ;
+
 instr_r: op_add
         | op_addu
         | op_sub
@@ -154,21 +155,44 @@ op_syscall: 'syscall'
 instr_s:  op_syscall
     ;
 
-op_li: 'li' rt=reg ',' signed_imm
-    ;
-
-op_move: 'move' rt=reg ',' rs=reg
-    ;
-
 op_ble: 'ble' rt=reg ',' rs=reg ',' target=iden
+    ;
+
+op_blt: 'blt' rt=reg ',' rs=reg ',' target=iden
+    ;
+
+op_bge: 'bge' rt=reg ',' rs=reg ',' target=iden
+    ;
+
+op_bgt: 'bgt' rt=reg ',' rs=reg ',' target=iden
+    ;
+
+//op_neg: 'neg'
+
+//op_not:
+
+
+op_li: 'li' rt=reg ',' signed_imm
     ;
 
 op_la: 'la' rt=reg ',' target=iden
     ;
 
-instr_p: op_li
-    | op_move
+op_move: 'move' rt=reg ',' rs=reg
+    ;
+
+//op_sge: 'sge'
+
+//op_sgt: 'sgt'
+
+
+instr_p: op_ble
     | op_ble
+    | op_blt
+    | op_bge
+    | op_bgt
+    | op_li
+    | op_move
     | op_la
     ;
 
