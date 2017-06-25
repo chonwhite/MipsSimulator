@@ -18,6 +18,9 @@ public enum OPCode {
     ADDIU("addiu",0x09),
     ANDI("andi",0x0c),
 
+    LW("lw",0x23),//TODO check;
+    SW("sw",0x2b),//TODO check;
+
 
     //======== persuade instruction;
     ;

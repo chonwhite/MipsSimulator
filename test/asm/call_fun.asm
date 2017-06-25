@@ -3,7 +3,6 @@
 gt: .asciiz "100 > 50\n"
 le: .asciiz "100 <= 50 \n"
 
-.text
 main:
 	li $t0, 100
 	ble $t1, 50, print_le

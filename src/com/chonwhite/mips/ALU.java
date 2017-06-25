@@ -6,12 +6,19 @@ import java.util.Scanner;
 public class ALU {
 
     private Scanner scanner = new Scanner(System.in);
+    private MemoryPipeline memoryPipeline;
+
     private ArrayList<Register> registers = new ArrayList<>();
 
     {
         for(int i = 0;i < 32;i++){
             registers.add(new Register(i));
         }
+        registers.get(Register.$sp).setIntValue(2147479548);
+    }
+
+    public void setMemoryPipeline(MemoryPipeline pipeline) {
+        this.memoryPipeline = pipeline;
     }
 
     public int execute(Instruction statement, int pc) {
@@ -82,6 +89,18 @@ public class ALU {
                         target.setIntValue(source.getIntValue() + immediateValue);
                         System.out.println("addi :" + target);
                         break;
+                    case LW: {
+                        int address = source.getIntValue() + immediateValue;
+                        int value = memoryPipeline.load(address);
+                        target.setIntValue(value);
+                        break;
+                    }
+                    case SW: {
+                        int address = source.getIntValue() + immediateValue;
+                        int value = target.getIntValue();
+                        memoryPipeline.save(address, value);
+                        break;
+                    }
                 }
                 break;
             }

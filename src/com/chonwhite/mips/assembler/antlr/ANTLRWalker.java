@@ -174,6 +174,13 @@ public class ANTLRWalker extends MipsAsmBaseListener {
 
     @Override
     public void enterOp_lw(MipsAsmParser.Op_lwContext ctx) {
+        Instruction instruction = InstructionCreator.lw(
+            ctx.rt.getText(), ctx.rs.getText(), ctx.signed_imm().getText());
+        instructionMemory.appendInstruction(instruction);
+    }
+
+    @Override
+    public void enterOp_la(MipsAsmParser.Op_laContext ctx) {
 
     }
 
@@ -228,7 +235,9 @@ public class ANTLRWalker extends MipsAsmBaseListener {
 
     @Override
     public void enterOp_sw(MipsAsmParser.Op_swContext ctx) {
-
+        IInstruction instruction = InstructionCreator.sw(
+                ctx.rt.getText(),ctx.rs.getText(),ctx.signed_imm().getText());
+        instructionMemory.appendInstruction(instruction);
     }
 
     @Override
@@ -328,4 +337,11 @@ public class ANTLRWalker extends MipsAsmBaseListener {
         super.visitErrorNode(node);
         System.out.println("error:" + node);
     }
+
+//    @Override
+//    public void enterData_asciiz(MipsAsmParser.Data_asciizContext ctx) {
+//        System.out.println("asciiz:");
+//        System.out.println(ctx.label().getText());
+//        System.out.println(ctx.content.getText());
+//    }
 }

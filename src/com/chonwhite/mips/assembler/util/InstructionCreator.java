@@ -133,7 +133,21 @@ public class InstructionCreator {
         return bne(getIndex(rt), getIndex(rs), -1);
     }
 
+    public static IInstruction lw(int rt, int rs, int offset) {
+        return iInstruction(OPCode.LW, rt, rs, offset);
+    }
 
+    public static IInstruction lw(String rt, String rs, String offset) {
+        return lw(getIndex(rt), getIndex(rs), Integer.valueOf(offset));
+    }
+
+    public static IInstruction sw(int rt, int rs, int offset) {
+        return iInstruction(OPCode.SW, rt, rs, offset);
+    }
+
+    public static IInstruction sw(String rt, String rs, String offset) {
+        return sw(getIndex(rt), getIndex(rs),Integer.valueOf(offset));
+    }
 
 
     //========================= J Instructions ========================//

@@ -10,6 +10,7 @@ data_segment: '.data' NEWLINE
 iden: NAME
     ;
 
+
 label: iden ':'
     | iden ':' NEWLINE
     | iden ':' NEWLINE stat
@@ -68,7 +69,7 @@ op_sra: 'sra' rd=reg ',' rt=reg ',' usigned_imm
     ;
 op_jr: 'jr' rs=reg
     ;
-
+    
 instr_r: op_add
         | op_addu
         | op_sub
@@ -209,6 +210,9 @@ instr: instr_r
     | instr COMMENT
     ;
 
+//data_asciiz:iden ':' ' .asciiz' QUOTED_STRING NEWLINE;
+
+
 segment :data_segment
     | text_segment
     ;
@@ -220,6 +224,9 @@ NUM: [0-9]+ ;
 HEX_NUM: '0'[xX][a-fA-F0-9]+;
 ALPHA: [a-zA-Z$_];
 NAME: [a-zA-Z_][a-zA-Z_0-9]*;
+
+fragment ESCAPED_QUOTE: '\\"';
+QUOTED_STRING: '"' ( ESCAPED_QUOTE | ~('\n'|'r'))*? '"';
 
 IMM_REG: '$'[0-9]+ ;
 S_REG: '$s'[0-7] ;

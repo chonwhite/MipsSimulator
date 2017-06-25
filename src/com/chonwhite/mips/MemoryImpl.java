@@ -8,8 +8,23 @@ public class MemoryImpl implements InstructionMemory {
     private HashMap<Integer, Instruction> instructionMap = new HashMap<>();
 
     @Override
+    public void setBaseAddress(int address) {
+        this.baseAddress = address;
+    }
+
+    @Override
+    public Memory<byte[]> getDataSegment() {
+        return null;
+    }
+
+    @Override
     public Instruction get(int address) {
         return instructionMap.get(address);
+    }
+
+    @Override
+    public void set(int address, Instruction value) {
+
     }
 
     @Override

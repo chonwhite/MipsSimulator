@@ -25,7 +25,8 @@ public class MipsAsmParser extends Parser {
 		T__38=39, T__39=40, T__40=41, T__41=42, T__42=43, T__43=44, T__44=45, 
 		T__45=46, T__46=47, T__47=48, T__48=49, T__49=50, T__50=51, T__51=52, 
 		T__52=53, WS=54, NEWLINE=55, COMMENT=56, NUM=57, HEX_NUM=58, ALPHA=59, 
-		NAME=60, IMM_REG=61, S_REG=62, T_REG=63, V_REG=64, A_REG=65, K_REG=66;
+		NAME=60, QUOTED_STRING=61, IMM_REG=62, S_REG=63, T_REG=64, V_REG=65, A_REG=66, 
+		K_REG=67;
 	public static final int
 		RULE_prog = 0, RULE_text_segment = 1, RULE_data_segment = 2, RULE_iden = 3, 
 		RULE_label = 4, RULE_reg = 5, RULE_usigned_imm = 6, RULE_signed_imm = 7, 
@@ -68,8 +69,8 @@ public class MipsAsmParser extends Parser {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, "WS", "NEWLINE", "COMMENT", "NUM", 
-		"HEX_NUM", "ALPHA", "NAME", "IMM_REG", "S_REG", "T_REG", "V_REG", "A_REG", 
-		"K_REG"
+		"HEX_NUM", "ALPHA", "NAME", "QUOTED_STRING", "IMM_REG", "S_REG", "T_REG", 
+		"V_REG", "A_REG", "K_REG"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -3729,7 +3730,7 @@ public class MipsAsmParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3D\u0203\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3E\u0203\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -3762,7 +3763,7 @@ public class MipsAsmParser extends Parser {
 		"\3\66\3\66\3\66\3\67\3\67\3\67\3\67\3\67\38\38\38\38\38\38\38\38\58\u01eb"+
 		"\n8\39\39\3:\3:\3:\3:\3:\3:\3:\5:\u01f6\n:\3:\3:\7:\u01fa\n:\f:\16:\u01fd"+
 		"\13:\3;\3;\5;\u0201\n;\3;\2\3r<\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36"+
-		" \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprt\2\4\4\2\6\t?D\3"+
+		" \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprt\2\4\4\2\6\t@E\3"+
 		"\2;<\2\u01fe\2w\3\2\2\2\4{\3\2\2\2\6~\3\2\2\2\b\u0081\3\2\2\2\n\u0093"+
 		"\3\2\2\2\f\u0095\3\2\2\2\16\u0097\3\2\2\2\20\u009c\3\2\2\2\22\u00ab\3"+
 		"\2\2\2\24\u00ad\3\2\2\2\26\u00b4\3\2\2\2\30\u00bb\3\2\2\2\32\u00c2\3\2"+
